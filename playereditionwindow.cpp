@@ -67,10 +67,10 @@ void PlayerEditionWindow::AddPlayer()
 
 			QMessageBox::information( this, "SteamID found", QString( "SteamID found: %1" ).arg( steamId ) );
 
-			json.Set( JsonPath::PlayerNamePath( steamId ), personaName );
+			json.Set( PropertyPath::PlayerNamePath( steamId ), personaName );
 
 			for ( const QString& key : PlayerStats.keys() )
-				json.Set( JsonPath::PlayerUpgrade( steamId, key ), PlayerStats[ key ] );
+				json.Set( PropertyPath::PlayerUpgrade( steamId, key ), PlayerStats[ key ] );
 
 			emit Edited();
 			this->close();
@@ -89,9 +89,9 @@ void PlayerEditionWindow::RemovePlayer()
 	const QString steamId = ui->removeComboBox->currentData().toString();
 
 	for ( const QString& key : PlayerStats.keys() )
-		json.Remove( JsonPath::PlayerUpgrade( steamId, key ) );
+		json.Remove( PropertyPath::PlayerUpgrade( steamId, key ) );
 
-	json.Remove( JsonPath::PlayerNamePath( steamId ) );
+	json.Remove( PropertyPath::PlayerNamePath( steamId ) );
 
 	emit Edited();
 

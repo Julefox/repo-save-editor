@@ -4,7 +4,7 @@ class JsonWrapper
 {
 public:
 	JsonWrapper() = default;
-	explicit JsonWrapper( const QJsonDocument& doc ) : document_( doc ) {}
+	explicit JsonWrapper( QJsonDocument& doc ) : document_( std::move( doc ) ) {}
 
 	[[nodiscard]] QJsonDocument& Document();
 	[[nodiscard]] const QJsonDocument& Document() const;

@@ -13,7 +13,7 @@ const QJsonDocument& JsonWrapper::Document() const
 
 QJsonValue JsonWrapper::Get( const QString& path ) const
 {
-	QStringList keys = JsonPath::ToList( path );
+	QStringList keys = PropertyPath::ToList( path );
 	const QJsonObject obj = document_.object();
 	QJsonValue val = obj;
 
@@ -28,7 +28,7 @@ QJsonValue JsonWrapper::Get( const QString& path ) const
 
 bool JsonWrapper::Set( const QString& path, const QJsonValue& value )
 {
-	QStringList keys = JsonPath::ToList( path );
+	QStringList keys = PropertyPath::ToList( path );
 	if ( keys.isEmpty() )
 		return false;
 
@@ -63,7 +63,7 @@ bool JsonWrapper::Set( const QString& path, const QJsonValue& value )
 
 bool JsonWrapper::Remove( const QString& path )
 {
-	QStringList keys = JsonPath::ToList( path );
+	QStringList keys = PropertyPath::ToList( path );
 	if ( keys.isEmpty() )
 		return false;
 
@@ -104,7 +104,7 @@ QStringList JsonWrapper::GetPlayerNames() const
 	QStringList playerNames;
 	for ( const QString& playerId : GetPlayerIds() )
 	{
-		if ( const QJsonValue playerName = Get( JsonPath::PlayerNamePath( playerId ) ); playerName.isString() )
+		if ( const QJsonValue playerName = Get( PropertyPath::PlayerNamePath( playerId ) ); playerName.isString() )
 			playerNames.append( playerName.toString() );
 	}
 	return playerNames;
@@ -112,7 +112,7 @@ QStringList JsonWrapper::GetPlayerNames() const
 
 QStringList JsonWrapper::GetPlayerIds() const
 {
-	if ( const QJsonValue playerNames = Get( JsonPath::PlayerPath() ); playerNames.isObject() )
+	if ( const QJsonValue playerNames = Get( PropertyPath::PlayerPath() ); playerNames.isObject() )
 	{
 		return playerNames.toObject().keys();
 	}
@@ -121,7 +121,7 @@ QStringList JsonWrapper::GetPlayerIds() const
 
 QString JsonWrapper::GetPlayerName( const QString& steamId ) const
 {
-	if ( const QJsonValue playerName = Get( JsonPath::PlayerNamePath( steamId ) ); playerName.isString() )
+	if ( const QJsonValue playerName = Get( PropertyPath::PlayerNamePath( steamId ) ); playerName.isString() )
 	{
 		return playerName.toString();
 	}
@@ -130,7 +130,7 @@ QString JsonWrapper::GetPlayerName( const QString& steamId ) const
 
 QString JsonWrapper::GetPlayerId( const QString& playerName ) const
 {
-	if ( const QJsonValue playerId = Get( JsonPath::PlayerNamePath( playerName ) ); playerId.isString() )
+	if ( const QJsonValue playerId = Get( PropertyPath::PlayerNamePath( playerName ) ); playerId.isString() )
 	{
 		return playerId.toString();
 	}
@@ -147,57 +147,57 @@ QByteArray JsonWrapper::ToJson( const QJsonDocument::JsonFormat format ) const
 	return document_.toJson( format );
 }
 
-QStringList JsonPath::ToList() const
+QStringList PropertyPath::ToList() const
 {
 	return split( '.' );
 }
 
-JsonPath JsonPath::PlayerPath()
+PropertyPath PropertyPath::PlayerPath()
 {
-	return JsonPath( "playerNames.value" );
+	return PropertyPath( "playerNames.value" );
 }
 
-JsonPath JsonPath::PlayerNamePath( const QString& steamId )
+PropertyPath PropertyPath::PlayerNamePath( const QString& steamId )
 {
-	return JsonPath( JsonPath( "playerNames.value.%1" ).arg( steamId ) );
+	return PropertyPath( PropertyPath( "playerNames.value.%1" ).arg( steamId ) );
 }
 
-JsonPath JsonPath::PlayerUpgrade( const QString& steamId, const QString& upgradeName )
+PropertyPath PropertyPath::PlayerUpgrade( const QString& steamId, const QString& upgradeName )
 {
-	return JsonPath( JsonPath( "dictionaryOfDictionaries.value.%1.%2" ).arg( upgradeName ).arg( steamId ) );
+	return PropertyPath( PropertyPath( "dictionaryOfDictionaries.value.%1.%2" ).arg( upgradeName ).arg( steamId ) );
 }
 
-JsonPath JsonPath::RunStatsPath( const QString& key )
+PropertyPath PropertyPath::RunStatsPath( const QString& key )
 {
-	return JsonPath( JsonPath( "dictionaryOfDictionaries.value.runStats.%1" ).arg( key ) );
+	return PropertyPath( PropertyPath( "dictionaryOfDictionaries.value.runStats.%1" ).arg( key ) );
 }
 
-JsonPath JsonPath::TeamNamePath()
+PropertyPath PropertyPath::TeamNamePath()
 {
-	return JsonPath( "teamName.value" );
+	return PropertyPath( "teamName.value" );
 }
 
-JsonPath JsonPath::DateAndTimePath()
+PropertyPath PropertyPath::DateAndTimePath()
 {
-	return JsonPath( "dateAndTime.value" );
+	return PropertyPath( "dateAndTime.value" );
 }
 
-JsonPath JsonPath::TimePlayedPath()
+PropertyPath PropertyPath::TimePlayedPath()
 {
-	return JsonPath( "timePlayed.value" );
+	return PropertyPath( "timePlayed.value" );
 }
 
-JsonPath JsonPath::ItemsPurchasedPath()
+PropertyPath PropertyPath::ItemsPurchasedPath()
 {
-	return JsonPath( "dictionaryOfDictionaries.value.itemsPurchased" );
+	return PropertyPath( "dictionaryOfDictionaries.value.itemsPurchased" );
 }
 
-JsonPath JsonPath::ItemsPurchasedCountPath( const QString& itemName )
+PropertyPath PropertyPath::ItemsPurchasedCountPath( const QString& itemName )
 {
-	return JsonPath( QString( "dictionaryOfDictionaries.value.itemsPurchased.%1" ).arg( itemName ) );
+	return PropertyPath( QString( "dictionaryOfDictionaries.value.itemsPurchased.%1" ).arg( itemName ) );
 }
 
-QStringList JsonPath::ToList( const QString& path )
+QStringList PropertyPath::ToList( const QString& path )
 {
 	return path.split( '.' );
 }
